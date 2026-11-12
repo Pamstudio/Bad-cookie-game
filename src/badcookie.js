@@ -111,7 +111,7 @@
   GK.speech = function (scene, speakerId, line, depth) {
     const ch = (C.characters || {})[speakerId] || {};
     const d = depth || 150;
-    const bw = Math.min(440, W - 300), x = W / 2, y = 96;
+    const bw = GK.PORTRAIT ? W - 40 : Math.min(440, W - 300), x = W / 2, y = GK.PORTRAIT ? 130 : 96;
     const parts = [];
     const add = (o) => { parts.push(o.setScrollFactor(0).setDepth(d)); return o; };
     const txt = scene.add.text(0, 0, line, { fontFamily: OUTFIT, fontStyle: '500', fontSize: '17px', color: '#2a1a10', wordWrap: { width: bw - 92 }, resolution: 2, lineSpacing: 2 });
@@ -156,9 +156,11 @@
         const k = o.texture && o.texture.key;
         if (k && k.indexOf('anim:badi-flaca') === 0) { if (o.shadow) o.shadow.destroy(); o.destroy(); }
       });
-      const im = sprite(this, 'badi-sentada', W * 0.74, H * 0.86, 230, 5);
+      /* Portrait: Badi sits below the stacked buttons instead of beside them. */
+      const bx = GK.PORTRAIT ? W * 0.62 : W * 0.74, feet = GK.PORTRAIT ? H - 30 : H * 0.86, bh = GK.PORTRAIT ? 200 : 230;
+      const im = sprite(this, 'badi-sentada', bx, feet, bh, 5);
       this.tweens.add({ targets: im, scaleY: im.scaleY * 0.985, duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
-      const z = bigText(this, W * 0.74 + 70, H * 0.86 - 230, 'z z z', 26, CREAM, VIOLET).setDepth(6).setAlpha(0.9);
+      const z = bigText(this, bx + 70, feet - bh, 'z z z', 26, CREAM, VIOLET).setDepth(6).setAlpha(0.9);
       this.tweens.add({ targets: z, y: z.y - 16, alpha: 0.2, duration: 1800, repeat: -1 });
     };
   }
@@ -222,10 +224,11 @@
     showChoice() {
       if (this.choice || this.chosen) return;
       if (this.skipBtn) this.skipBtn.destroy();
-      const q = bigText(this, W / 2, 96, '¿Qué hacés?', 46, CREAM, VIOLET).setDepth(60).setScale(0.4);
+      const P = GK.PORTRAIT; /* portrait stacks the two choices instead of placing them side by side */
+      const q = bigText(this, W / 2, P ? 215 : 96, '¿Qué hacés?', 46, CREAM, VIOLET).setDepth(60).setScale(0.4);
       this.tweens.add({ targets: q, scale: 1, duration: 300, ease: 'Back.Out' });
-      const stay = GK.button(this, W * 0.3, 200, 'Quedarme sentado', () => this.stay(), { w: 300, h: 76, size: 26, fill: '#4b3a5c', textColor: CREAM, id: 'stay', depth: 60 });
-      const train = GK.button(this, W * 0.7, 200, '¡A ENTRENAR!', () => this.train(), { w: 300, h: 76, size: 32, fill: LIME, textColor: '#2a1640', id: 'train', depth: 60 });
+      const stay = GK.button(this, P ? W / 2 : W * 0.3, P ? 410 : 200, 'Quedarme sentado', () => this.stay(), { w: 300, h: 76, size: 26, fill: '#4b3a5c', textColor: CREAM, id: 'stay', depth: 60 });
+      const train = GK.button(this, P ? W / 2 : W * 0.7, P ? 310 : 200, '¡A ENTRENAR!', () => this.train(), { w: 300, h: 76, size: 32, fill: LIME, textColor: '#2a1640', id: 'train', depth: 60 });
       [stay, train].forEach((b, i) => {
         b.setScale(0);
         this.tweens.add({ targets: b, scale: 1, duration: 320, delay: 120 * i, ease: 'Back.Out' });
@@ -503,16 +506,18 @@
       this.ended = true;
       /* A short band at the top, so Badi with the 100 kg stays fully in view below it. */
       /* A slim band at the top: title and the two buttons in one row, the scene stays in view. */
-      this.add.rectangle(W / 2, 52, W, 104, 0x1a0d24, 0.6).setDepth(40);
-      const t = bigText(this, W * 0.2, 52, '¡LO LOGRASTE!', 36, LIME, VIOLET).setDepth(41).setScale(0.3);
+      /* Portrait stacks title and buttons in a taller band; landscape keeps them in one row. */
+      const P = GK.PORTRAIT;
+      this.add.rectangle(W / 2, P ? 150 : 52, W, P ? 300 : 104, 0x1a0d24, 0.6).setDepth(40);
+      const t = bigText(this, P ? W / 2 : W * 0.2, P ? 60 : 52, '¡LO LOGRASTE!', P ? 44 : 36, LIME, VIOLET).setDepth(41).setScale(0.3);
       this.tweens.add({ targets: t, scale: 1, duration: 360, ease: 'Back.Out' });
-      const want = GK.button(this, W * 0.53, 52, '¡Quiero una cookie!', () => { GK.sfx(this, 'click'); GK.badCookie.wantCookie(); }, { w: 290, h: 58, size: 25, fill: LIME, textColor: '#2a1640', id: 'want-cookie', depth: 45 });
+      const want = GK.button(this, P ? W / 2 : W * 0.53, P ? 150 : 52, '¡Quiero una cookie!', () => { GK.sfx(this, 'click'); GK.badCookie.wantCookie(); }, { w: 290, h: 58, size: 25, fill: LIME, textColor: '#2a1640', id: 'want-cookie', depth: 45 });
       this.tweens.add({ targets: want, scale: 1.06, duration: 520, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
       GK.button(this, W / 2, 300, 'Jugar de nuevo', () => {
         GK.sfx(this, 'click');
         GK.resetSave();
         this.scene.start('Title');
-      }, { w: 190, h: 48, size: 20, id: 'replay', depth: 45 }).setPosition(W * 0.82, 52);
+      }, { w: 190, h: 48, size: 20, id: 'replay', depth: 45 }).setPosition(P ? W / 2 : W * 0.82, P ? 245 : 52);
       GK.brandBadge(this, H - 18);
     }
   }

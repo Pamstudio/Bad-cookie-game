@@ -133,6 +133,11 @@
     };
     const check = () => {
       const wrong = (window.innerWidth > window.innerHeight) === GK.PORTRAIT;
+      /* Responsive: turned on the start screen (nothing in progress), reload in the new shape; mid-game, ask to turn back. */
+      if (wrong) {
+        const keys = game.scene.getScenes(true).map((s) => s.scene.key);
+        if (keys.every((k) => k === 'Boot' || k === 'Title')) { location.reload(); return; }
+      }
       if (wrong && !sideways) freeze();
       else if (!wrong && sideways) thaw();
       el.style.display = wrong ? 'flex' : 'none';

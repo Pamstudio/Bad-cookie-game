@@ -55,6 +55,15 @@
 <button id="bc-exit" type="button" aria-label="Salir del juego" title="Salir">&#x2715;</button>
 <script src="lib/phaser.min.js"></script>
 <script src="content/content.js"></script>
+<script>
+  /* Responsive: a phone held upright plays the tall (portrait) version; everything else plays landscape. */
+  (function () {
+    try {
+      var phone = window.matchMedia && window.matchMedia('(pointer: coarse)').matches && Math.min(screen.width, screen.height) < 700;
+      if (phone && window.innerHeight > window.innerWidth) window.GAME_CONTENT.orientation = 'portrait';
+    } catch (e) { /* keep landscape */ }
+  })();
+</script>
 <script src="src/core.js"></script>
 <script src="src/kit.js"></script>
 <script src="src/scenes.js"></script>

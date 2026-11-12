@@ -128,7 +128,10 @@
       this.physics.add.collider(this.enemies, this.solids);
 
       const cam = this.cameras.main;
-      cam.setBounds(0, Math.min(0, worldH - H), worldW, Math.max(worldH, H));
+      /* Portrait (phone held upright): lift the level above a dark band that holds the touch buttons. */
+      const pad = GK.PORTRAIT ? 240 : 0;
+      if (pad) this.add.rectangle(-W, worldH, worldW + W * 2, pad + T * 6, 0x1a0d24, 1).setOrigin(0).setDepth(20);
+      cam.setBounds(0, Math.min(0, worldH + pad - H), worldW, Math.max(worldH + pad, H));
       cam.startFollow(this.camTarget, true, 0.12, 0.12, RUNNER ? -W * 0.25 : 0, 0);
       cam.setDeadzone(RUNNER ? 0 : 120, 80);
 
