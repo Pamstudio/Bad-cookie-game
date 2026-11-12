@@ -1078,8 +1078,7 @@ window.GK = (function () {
     };
     if (buttons.includes('left')) make(80, H - 80, '◀', 'left');
     if (buttons.includes('right')) make(190, H - 80, '▶', 'right');
-    /* Raised above the bottom-right corner, where the host's "Powered by Netlify" badge sits and takes the taps. */
-    if (buttons.includes('jump')) make(W - 90, H - 165, '▲', 'jump', 54);
+    if (buttons.includes('jump')) make(W - 90, H - 80, '▲', 'jump', 54);
     return pad;
   }
 
