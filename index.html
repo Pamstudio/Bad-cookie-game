@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>BAD COOKIE</title>
+<style>
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #0b0b12; overflow: hidden; touch-action: none; }
+  /* The stage box sits inside the phone's safe area (notch, home bar); the insets are 0 on desktop. Phaser's
+     CENTER_BOTH centres the canvas in it with margins, so the box itself does not centre (that would shift it twice). */
+  #game { position: absolute; top: env(safe-area-inset-top, 0px); right: env(safe-area-inset-right, 0px); bottom: env(safe-area-inset-bottom, 0px); left: env(safe-area-inset-left, 0px); z-index: 1; }
+  /* Behind the stage: the bars FIT leaves are the theme colour, or the key art blurred and dimmed (GK.pageBackdrop).
+     The blur is a tiny dimmed copy the browser stretches, not a CSS filter: no full-screen filter layer to composite
+     under the game canvas on every frame of a phone. */
+  #gk-backdrop { position: fixed; inset: 0; background-size: cover; background-position: center; z-index: 0; }
+  /* Turn-your-phone prompt, shown on touch screens held in the wrong orientation (main.js). */
+  #gk-rotate { position: fixed; inset: 0; z-index: 50; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: rgba(8,8,14,0.94); color: #fff; font: 600 20px "Trebuchet MS", sans-serif; text-align: center; padding: 24px; }
+  #game canvas { display: block; }
+  .gk-video { position: absolute; background: #000; object-fit: contain; z-index: 10; }
+  /* Story fonts (SIL Open Font License, see lib/fonts/OFL-*.txt). Only the game's style's fonts are fetched. */
+  @font-face { font-family: "GK Lora"; src: url("lib/fonts/lora-regular.woff2") format("woff2"); font-weight: 400 600; font-display: swap; }
+  @font-face { font-family: "GK Lora"; src: url("lib/fonts/lora-bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+  @font-face { font-family: "GK Hand"; src: url("lib/fonts/patrick-hand.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "GK Comic"; src: url("lib/fonts/comic-neue-bold.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "GK Bangers"; src: url("lib/fonts/bangers.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "GK Rounded"; src: url("lib/fonts/varela-round.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "GK Pixel"; src: url("lib/fonts/press-start-2p.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "GK Fell"; src: url("lib/fonts/im-fell-english.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "GK Fell"; src: url("lib/fonts/im-fell-english-italic.woff2") format("woff2"); font-style: italic; font-display: swap; }
+  @font-face { font-family: "GK Type"; src: url("lib/fonts/special-elite.woff2") format("woff2"); font-display: swap; }
+  /* Bad Cookie brand fonts (SIL Open Font License, see lib/fonts/OFL-bad-cookie.txt). */
+  @font-face { font-family: "BC Bagel"; src: url("lib/fonts/bc-BagelFatOne-Regular.woff") format("woff"); font-display: swap; }
+  @font-face { font-family: "BC Outfit"; src: url("lib/fonts/bc-Outfit-Medium.woff") format("woff"); font-weight: 400 600; font-display: swap; }
+  @font-face { font-family: "BC Outfit"; src: url("lib/fonts/bc-Outfit-Bold.woff") format("woff"); font-weight: 700; font-display: swap; }
+  /* The exit X: always on top, in the top-right corner of the game (badcookie.js keeps it on the canvas). */
+  #bc-exit { position: fixed; z-index: 40; width: 40px; height: 40px; border-radius: 10px; border: 3px solid #FFF1D6; background: #6B3A1F; color: #FFF1D6;
+    font: 700 22px "BC Outfit", "Trebuchet MS", sans-serif; line-height: 1; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: 0 3px 0 #2a160b; padding: 0; image-rendering: pixelated; -webkit-tap-highlight-color: transparent; }
+  #bc-exit:hover { background: #7B3FF2; }
+  #bc-exit:active { transform: translateY(2px); box-shadow: 0 1px 0 #2a160b; }
+</style>
+<script>
+  /* ===== Integration settings: edit these (or pass ?exit=URL&order=URL&target=_top in the game's link) =====
+     exitUrl:  where the X sends the player (empty: the game tells the page around it and goes back to its start screen)
+     orderUrl: where "¡Quiero una cookie!" sends the player (empty: the game only tells the page around it)
+     target:   "_top" leaves the iframe for the whole page, "_self" stays in the frame, "_blank" opens a new tab
+     The game also posts { source: "bad-cookie", type: "exit" | "want-cookie" } to the parent window
+     and fires the window events "badcookie:exit" and "badcookie:want-cookie". */
+  window.BAD_COOKIE_CONFIG = window.BAD_COOKIE_CONFIG || { exitUrl: "", orderUrl: "", target: "_top" };
+</script>
+</head>
+<body>
+<div id="gk-backdrop"></div>
+<div id="game"></div>
+<button id="bc-exit" type="button" aria-label="Salir del juego" title="Salir">&#x2715;</button>
+<script src="lib/phaser.min.js"></script>
+<script src="content/content.js"></script>
+<script src="src/core.js"></script>
+<script src="src/kit.js"></script>
+<script src="src/scenes.js"></script>
+<script src="src/story.js"></script>
+<script src="src/play.js"></script>
+<script src="src/badcookie.js"></script>
+<script src="src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+Bagel Fat One (Copyright The Bagel Fat One Project Authors) and Outfit (Copyright The Outfit Project Authors)
+are licensed under the SIL Open Font License, Version 1.1 (https://openfontlicense.org).
+The files here are Latin subsets converted to WOFF for the web; the original TTF files are in setup/brand-fonts.
